@@ -4,15 +4,16 @@ import pickle
 from schema.pydantic_model import Userinput
 import pandas as pd
 
-with open("Models/model.pkl",'rb') as f:
+with open("Models/laptop_price_prediction.pkl", 'rb') as f:
     model = pickle.load(f)
 
-lb = model['label_encoder']
-scl = model['Standard_scaler']
-lr = model['Linear_Regression_model']
-random_forest = model['Randome_Forest_regressor']
-knn = model['knn_models']
-xgb = model['xgBOOST']
+encoders = model["encoders"]
+scl = model["Standard_scaler"]
+lr = model["Linear_Regression_model"]
+random_forest = model["Random_Forest_regressor"]
+knn = model["knn_model"]
+xgb = model["xgboost_model"]
+column_order = model["columns"] 
 
 
 app = FastAPI(title="Laptop Price Prediction.")
@@ -32,27 +33,38 @@ def predictions(predict:Userinput):
         'Status':predict.Status,
         'RAM':predict.RAM,
         'Storage':predict.Storage,
-        'Storage_type':predict.Storage_type,
+        'Storage type':predict.Storage_type,
         'GPU':predict.GPU,
         'Screen':predict.Screen,
         'Touch':predict.Touch
     }])
+    
+    temp1 = ['Brand', 'Model', 'CPU', 'Status', 'Storage type', 'GPU', 'Touch']
+    
+    for col in temp1:
+        encoder = encoders[col]
 
-    temp1 = ['Brand','Model','CPU','Status','Storage type','GPU','Touch']
+        if new_df[col][0] in encoder.classes_:
+            new_df[col] = encoder.transform(new_df[col])
+        else:
+            new_df[col] = [-1] 
 
-    for i in temp1:
-        new_df[i] = lb.transform(new_df[i])
+    new_df = new_df[column_order]
+    
+    new_scaled_data = scl.transform(new_df) 
 
-    new_scaled_data = scl.tranasform(new_df)
-
-    lr_prediction = lr.predict(new_scaled_data)
-    random_forest_prediction = random_forest.predict(new_scaled_data)
-    knn_prediction = knn.predict(new_scaled_data)
-    xgb_predicted = xgb.predict(new_scaled_data)
-
-    return JSONResponse(status_code=200,content={
-        'Linear Regresson Prediction':lr_prediction,
-        "Randome Forest Prediction":random_forest_prediction,
-        "knn Prediction":knn_prediction,
-        "XGBoost Prediction":xgb_predicted
+    lr_prediction = lr.predict(new_scaled_data)[0]
+    rf_prediction = random_forest.predict(new_scaled_data)[0]
+    knn_prediction = knn.predict(new_scaled_data)[0]
+    xgb_prediction = xgb.predict(new_scaled_data)[0]
+    
+    indr = 88.69
+    
+    return JSONResponse(
+    status_code=200,
+    content={
+        "LinearRegression_Price": f"{float(round(lr_prediction * indr, 2))} Rupee.",
+        "RandomForest_Price": f"{float(round(rf_prediction * indr, 2))} Rupee.",
+        "KNN_Price": f"{float(round(knn_prediction * indr, 2))} Rupee.",
+        "XGBoost_Price": f"{float(round(xgb_prediction * indr, 2))} Rupee."
     })

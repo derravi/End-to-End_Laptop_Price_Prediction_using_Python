@@ -1,0 +1,7 @@
+pydantic==2.11.10
+fastapi==0.118.0
+pandas==2.3.2
+numpy==2.2.6
+matplotlib==3.10.6
+seaborn==0.13.2
+uvicorn==0.37.0
