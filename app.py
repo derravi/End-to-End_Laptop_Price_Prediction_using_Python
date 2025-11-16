@@ -63,8 +63,8 @@ def predictions(predict:Userinput):
     return JSONResponse(
     status_code=200,
     content={
-        "LinearRegression_Price": f"{float(round(lr_prediction * indr, 2))} Rupee.",
-        "RandomForest_Price": f"{float(round(rf_prediction * indr, 2))} Rupee.",
-        "KNN_Price": f"{float(round(knn_prediction * indr, 2))} Rupee.",
-        "XGBoost_Price": f"{float(round(xgb_prediction * indr, 2))} Rupee."
+        "LinearRegression_Price": f"{float(round(lr_prediction * indr, 2))} Rupee with 65.0 % Accuracy.",
+        "RandomForest_Price": f"{float(round(rf_prediction * indr, 2))} Rupee with 77.0 % Accuracy.",
+        "KNN_Price": f"{float(round(knn_prediction * indr, 2))} Rupee with 83.0 % Accuracy.",
+        "XGBoost_Price": f"{float(round(xgb_prediction * indr, 2))} Rupee with 81.0 % Accuracy."
     })

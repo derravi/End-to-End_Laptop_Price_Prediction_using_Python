@@ -226,16 +226,18 @@ print("Predicted Price from the XG Boost Model:",round(xgb_predicted_price[0],2)
 
 
 #Make a Pickle Model
-
 model = {
-    "label_encoder":lb,
-    "Standard_scaler":scl,
-    "Linear_Regression_model":lr,
-    "Randome_Forest_regressor":random_forest,
-    "knn_models":knn,
-    "xgBOOST":xgb
+    "encoders": encoders,              
+    "Standard_scaler": scl,            
+    "Linear_Regression_model": lr,    
+    "Random_Forest_regressor": random_forest,  
+    "knn_model": knn,                
+    "xgboost_model": xgb,              
+    "columns": list(x.columns)         
+    
 }
 
+with open("Models/laptop_price_prediction.pkl", "wb") as f:
+    pickle.dump(model, f)
 
-with open("Models/model.pkl",'wb') as f:
-    pickle.dump(model,f)
+print("\nPickle File Created Successfully!")
