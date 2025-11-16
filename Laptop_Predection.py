@@ -69,6 +69,30 @@ rearrange_columns = ['Brand','Model','CPU','Status','RAM','Storage','Storage typ
 df = df.reindex(columns=rearrange_columns)
 print(df.head())
 
+print("Distribution of Final Price.")
+
+plt.figure(figsize=(8,5))
+sns.histplot(df['Final Price'], bins=40,color="red",edgecolor="black")
+plt.title("Distribution of Laptop Final Price")
+plt.xlabel("Price")
+plt.ylabel("Count")
+plt.tight_layout()
+plt.savefig("Diagram Images/Distribution of Final Price.png",dpi=200,)
+plt.show()
+
+
+#RAM vs Final Price
+
+plt.figure(figsize=(8,4))
+plt.scatter(df['RAM'],df['Final Price'],color="green",edgecolor="black")
+plt.title("RAM vs Final Price")
+plt.xlabel("RAM (GB)")
+plt.ylabel("Price (in $)")
+plt.grid(True)
+plt.tight_layout()
+plt.savefig("Diagram images/RAM_vs_Price.png",dpi=200,bbox_inches='tight')
+plt.show()
+
 branch_unique = df['Brand'].unique()
 Model_uniqie=df['Model'].unique()
 CPU_unique = df['CPU'].unique()
@@ -86,17 +110,18 @@ df.dtypes
 print("We are Encode the Labeled Dataset using the Label Encoder Functions............\n")
 
 temp1 = ['Brand','Model','CPU','Status','Storage type','GPU','Touch']
-encoders = {}
+
+encoders = {}   
+
 for col in temp1:
     lb = LabelEncoder()
     df[col] = lb.fit_transform(df[col])
-    encoders[col] = lb
+    encoders[col] = lb 
 
 print("Encoding Completed Using Label Encoder................\n")
 print(df.head())
 
 encoders
-
 
 #Define The X And Y Columns for the Training and testing data.
 print("Define The X And Y Columns for the Training and testing data..........\n")
@@ -225,7 +250,6 @@ print("Predicted Price from the KNN Model:",round(knn_predicted_price[0],2))
 print("Predicted Price from the XG Boost Model:",round(xgb_predicted_price[0],2))
 
 
-#Make a Pickle Model
 model = {
     "encoders": encoders,              
     "Standard_scaler": scl,            
